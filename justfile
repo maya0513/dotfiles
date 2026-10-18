@@ -68,6 +68,15 @@ nix-gc:
 # Applications
 # ---------------------------------------------------------------------------
 
+alias gd := godot
+alias gd-install := godot-install
+alias gd-use := godot-use
+alias gd-uninstall := godot-uninstall
+alias gd-current := godot-current
+alias gd-list := godot-list
+alias gd-doctor := godot-doctor
+alias gd-register-desktop := godot-register-desktop
+
 # Godot の最新版、または指定バージョンをインストールして有効化
 godot version="latest":
     version="$(./godot/install.sh "{{version}}")"; ./godot/use.sh "$version"

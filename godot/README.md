@@ -36,14 +36,17 @@ Godot の公式 GitHub Releases から Linux x86_64 版を取得し、バージ�
 
 ## 基本操作
 
+Use `just gd` and `just gd-*` as short aliases for `just godot` and
+`just godot-*`. Both forms accept the same arguments.
+
 ### インストールして有効化
 
 ```bash
 # 最新安定版
-just godot
+just gd
 
 # 指定バージョン
-just godot 4.7.2
+just gd 4.7.2
 ```
 
 指定バージョンが既にインストール済みの場合は、ダウンロードせず切り替えだけを行う。
@@ -53,14 +56,14 @@ just godot 4.7.2
 現在有効なバージョンは変更しない。
 
 ```bash
-just godot-install
-just godot-install 4.7.2
+just gd-install
+just gd-install 4.7.2
 ```
 
 ### バージョンの切り替え
 
 ```bash
-just godot-use 4.7.2
+just gd-use 4.7.2
 ```
 
 対象がこのスクリプトによってインストール済みの場合だけ切り替える。
@@ -68,17 +71,17 @@ just godot-use 4.7.2
 ### 現在のバージョンと一覧
 
 ```bash
-just godot-current
-just godot-list
+just gd-current
+just gd-list
 ```
 
-有効なバージョンがない場合、`godot-current` は `none` を表示する。一覧では有効版に
+有効なバージョンがない場合、`gd-current` は `none` を表示する。一覧では有効版に
 `(current)`、管理マーカーがないバージョン形式のディレクトリに `(unmanaged)` を表示する。
 
 ### 構成の診断
 
 ```bash
-just godot-doctor
+just gd-doctor
 ```
 
 Linux x86_64環境、必要なコマンド、インストール済みバージョン、管理マーカー、`current`、
@@ -100,8 +103,16 @@ Linux x86_64環境、必要なコマンド、インストール済みバージ�
 Godot をインストールして有効化した後、ユーザーごとに一度登録する。
 
 ```bash
-just godot-register-desktop
+just gd-register-desktop
 ```
+
+Registration also installs the bundled Godot icon into
+`${XDG_DATA_HOME:-~/.local/share}/icons/hicolor/scalable/apps/` and refreshes
+the icon cache when `gtk-update-icon-cache` is available. Run this command
+again to add the icon to an existing desktop entry.
+
+The icon comes from [Godot 4.5-stable](https://github.com/godotengine/godot/blob/4.5-stable/icon.svg).
+It is distributed without changes under [CC BY 4.0](assets/LOGO_LICENSE.txt).
 
 デスクトップ項目は `/usr/local/bin/godot` を参照する。このパスはバージョン切り替え後も
 変わらないため、通常のインストールや更新のたびに登録し直す必要はない。登録項目を削除
@@ -110,7 +121,7 @@ just godot-register-desktop
 ### アンインストール
 
 ```bash
-just godot-uninstall 4.7.1
+just gd-uninstall 4.7.1
 ```
 
 現在有効なバージョンは削除できない。先に別バージョンへ切り替える。また、
