@@ -1,7 +1,7 @@
 # Blender バージョン管理
 
 Blender 公式サイトから Linux x64 版を取得し、バージョン別に `/opt` へインストールする。
-Blender 本体は Nix、APT、chezmoi では管理しない。
+Blender 本体はこの専用スクリプトで管理し、miseのグローバルCLI設定には含めない。
 
 ## 配置
 
@@ -134,7 +134,7 @@ just b3d-uninstall 5.2.1
 
 ## 取得と検証
 
-- 最新版解決: `https://www.blender.org/download/` の安定版 Linux x64 archive
+- 最新版解決: `https://download.blender.org/release/` の索引から、安定版 Linux x64 archive がある最新系列の最新版（`www.blender.org/download/` は Cloudflare のチャレンジで `curl` に 403 を返すため使わない）
 - archive: `https://download.blender.org/release/Blender<major.minor>/blender-<version>-linux-x64.tar.xz`
 - checksum: 同じ release directory の `blender-<version>.sha256`
 

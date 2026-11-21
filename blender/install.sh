@@ -9,7 +9,6 @@ source "${SCRIPT_DIR}/../lib/app-manager.sh"
 # shellcheck source=blender/config.sh
 source "${SCRIPT_DIR}/config.sh"
 
-readonly DOWNLOAD_PAGE="https://www.blender.org/download/"
 readonly RELEASE_BASE_URL="https://download.blender.org/release"
 
 WORK_DIR=""
@@ -37,15 +36,44 @@ resolve_version() {
 
   if [[ -z "${requested}" || "${requested}" == "latest" ]]; then
     info "Resolving the latest stable Blender release..."
-    local download_page
-    download_page="$(curl --fail --silent --show-error --location --retry 3 "${DOWNLOAD_PAGE}")" ||
-      die "could not load the Blender download page"
+    # www.blender.org/download/ is behind a Cloudflare challenge and
+    # returns 403 to curl, so resolve from the official release index
+    # on download.blender.org instead: the same host that serves the
+    # archives and checksums used below.
+    local release_index
+    release_index="$(curl --fail --silent --show-error --location --retry 3 "${RELEASE_BASE_URL}/")" ||
+      die "could not load the Blender release index"
 
-    if [[ "${download_page}" =~ blender-([0-9]+\.[0-9]+\.[0-9]+)-linux-x64\.tar\.xz ]]; then
-      printf '%s\n' "${BASH_REMATCH[1]}"
-    else
-      die "could not resolve the latest stable Blender Linux x64 release"
-    fi
+    local -a series_list=()
+    mapfile -t series_list < <(
+      printf '%s\n' "${release_index}" |
+        grep -oE 'Blender[0-9]+\.[0-9]+/' |
+        grep -oE '[0-9]+\.[0-9]+' |
+        sort -uV || true
+    )
+
+    # Newest series first; a series only counts if it actually
+    # contains a stable Linux x64 archive.
+    local series series_page version
+    local i
+    for ((i = ${#series_list[@]} - 1; i >= 0; i--)); do
+      series="${series_list[i]}"
+      [[ -n "${series}" ]] || continue
+      series_page="$(curl --fail --silent --show-error --location --retry 3 "${RELEASE_BASE_URL}/Blender${series}/" || true)"
+      [[ -n "${series_page}" ]] || continue
+      version="$(
+        printf '%s\n' "${series_page}" |
+          grep -oE 'blender-[0-9]+\.[0-9]+\.[0-9]+-linux-x64\.tar\.xz' |
+          grep -oE '[0-9]+\.[0-9]+\.[0-9]+' |
+          sort -uV |
+          tail -n 1 || true
+      )"
+      if [[ -n "${version}" ]]; then
+        printf '%s\n' "${version}"
+        return 0
+      fi
+    done
+    die "could not resolve the latest stable Blender Linux x64 release"
   else
     canonical_version "${requested}"
   fi
@@ -61,7 +89,7 @@ main() {
     exit 0
   fi
 
-  require_commands curl tar xz sha256sum awk mktemp uname cp
+  require_commands curl tar xz sha256sum awk mktemp uname cp grep sort tail
   require_linux_x86_64
 
   local version
