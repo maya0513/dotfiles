@@ -142,6 +142,16 @@ activate_version() {
     die "${current_link} exists and is not a symlink"
   fi
   validate_frontend_link
+
+  # Already active with a frontend link in place: nothing to change,
+  # so do not require root access just to re-activate the same version.
+  if [[ -L "${current_link}" ]] &&
+    [[ "$(readlink "${current_link}")" == "${version}" ]] &&
+    [[ -L "${FRONTEND_LINK}" ]]; then
+    info "${APP_NAME} ${version} is already active."
+    return 0
+  fi
+
   require_root_access
 
   local current_staging="${APP_ROOT}/.current.$$.tmp"
