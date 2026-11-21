@@ -1,4 +1,4 @@
-# ~/chezmoi-dotfiles/justfile
+# ~/dotfiles/justfile
 
 set shell := ["bash", "-euc"]
 

@@ -1,4 +1,4 @@
-# chezmoi-dotfiles
+# dotfiles
 
 グローバルCLIはmise、ホームディレクトリの設定はchezmoiで管理する。
 
