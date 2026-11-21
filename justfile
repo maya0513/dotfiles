@@ -11,57 +11,46 @@ default:
 # Upgrade
 # ---------------------------------------------------------------------------
 
-# APT、Snap、mise、Godot、Blender、Nixを順番に更新
+# APT、Snap、mise、Godot、Blenderを順番に更新
 upgrade:
-    sudo apt update && sudo apt upgrade -y && sudo snap refresh && mise self-update -y && mise upgrade && just godot && just godot-doctor && just b3d && just b3d-doctor && nix flake update && just nix-switch
+    sudo apt update && sudo apt upgrade -y && sudo snap refresh && mise self-update -y && just mise-upgrade && just godot && just godot-doctor && just b3d && just b3d-doctor
 
 
 # ---------------------------------------------------------------------------
-# Nix
+# mise
 # ---------------------------------------------------------------------------
 
-# Nix flake をフォーマット
-nix-fmt:
-    nix fmt
+# グローバル設定とlockに従ってCLIをインストール
+mise-install:
+    mise install --locked
 
-# Nix flake の評価・checksを確認
-nix-check:
-    nix flake check --impure path:.
+# グローバルCLIのバージョンと配布元をlockへ記録
+mise-lock:
+    mise lock --global
 
-# result symlink は作らない
-# Nix の base-env を実際にビルドする
-nix-build:
-    nix build --impure path:.#default --no-link
+# グローバルCLIを更新し、lockも更新
+mise-upgrade:
+    mise upgrade
+    mise lock --global
 
-# build が成功してから既存 base-env を入れ替える。
-# 現在の Nix flake をユーザープロファイルへ反映
-nix-switch: nix-check nix-build
-    nix profile remove chezmoi-dotfiles 2>/dev/null || true
-    nix profile add --impure path:.#default
+# 現在有効なツールを表示
+mise-list:
+    mise ls
 
-# 現在の Nix flake をユーザープロファイルへ同期
-nix-sync: nix-switch
-
-# Git で dotfiles repo を pull して Nix 環境を同期
-nix-pull:
-    git pull --ff-only
-    just nix-sync
-
-# 現在の Nix profile を表示
-nix-profile:
-    nix profile list
-
-# 直前の Nix profile に戻す
-nix-rollback:
-    nix profile rollback
-
-# Nix store全体の未参照pathを削除せず確認
-nix-gc-check:
-    nix store gc --dry-run
-
-# Nix store全体の未参照pathを削除（profile履歴は保持）
-nix-gc:
-    nix store gc
+# インストール漏れと、基本CLIの実行元・起動を確認
+mise-check:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mise install --dry-run-code
+    mise_data="${MISE_DATA_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/mise}"
+    for tool in chezmoi starship gh just just-lsp git-lfs rg fd fzf jq bat zoxide; do
+        resolved="$(realpath "$(mise which "$tool")")"
+        case "$resolved" in
+            "$mise_data"/installs/*) ;;
+            *) printf 'mise以外の実行ファイルです: %s → %s\n' "$tool" "$resolved" >&2; exit 1 ;;
+        esac
+        "$resolved" --version
+    done
 
 
 # ---------------------------------------------------------------------------
