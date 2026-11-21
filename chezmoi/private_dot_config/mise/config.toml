@@ -1,0 +1,21 @@
+[tools]
+"npm:@openai/codex" = "latest"
+node = "lts"
+pnpm = "latest"
+rust = { version = "latest", mr_boxington = true }
+mr-boxington = "latest"
+opencode = { version = "latest", allow_builds = ["@opencode/cli"] }
+packslip = { version = "latest", identity_prefix = "https://github.com/jdx/packslip/.github/workflows/release.yml@", issuer = "https://token.actions.githubusercontent.com", list_identity_prefix = "https://github.com/jdx/packslip/.github/workflows/packslip-releases.yml@" }
+chezmoi = "latest"
+starship = "latest"
+gh = "latest"
+just = "latest"
+"github:terror/just-lsp" = "latest"
+git-lfs = "latest"
+ripgrep = "latest"
+fd = "latest"
+fzf = "latest"
+jq = "latest"
+bat = "latest"
+zoxide = "latest"
+

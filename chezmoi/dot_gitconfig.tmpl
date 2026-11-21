@@ -1,0 +1,11 @@
+[user]
+	name = {{ .gitName | quote }}
+	email = {{ .gitEmail | quote }}
+[init]
+	defaultBranch = main
+[credential "https://github.com"]
+	helper =
+	helper = !{{ printf "%s/.local/bin/mise" .chezmoi.homeDir | quote }} --cd {{ .chezmoi.homeDir | quote }} exec -- gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !{{ printf "%s/.local/bin/mise" .chezmoi.homeDir | quote }} --cd {{ .chezmoi.homeDir | quote }} exec -- gh auth git-credential

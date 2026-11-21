@@ -5,8 +5,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 bindkey -r '^V'
 
-eval "$(starship init zsh)"
-eval "$(mise activate zsh)"
+# /etc/zsh/zshrcが追加するNixのPATHも、miseを有効にする前に外す。
+path=("${(@)path:#$HOME/.nix-profile/bin}")
+path=("${(@)path:#/nix/*}")
 
 # pnpm
 export PNPM_HOME='/home/maya0513/.local/share/pnpm'
@@ -20,3 +21,6 @@ case ":${PATH}:" in
   *:"$HOME/.local/bin":*) ;;
   *) export PATH="$HOME/.local/bin:$PATH" ;;
 esac
+
+eval "$("$HOME/.local/bin/mise" activate zsh)"
+eval "$(starship init zsh)"

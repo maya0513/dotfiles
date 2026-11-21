@@ -1,7 +1,0 @@
-[tools]
-"npm:@openai/codex" = "latest"
-go = "latest"
-node = "lts"
-pnpm = "latest"
-rust = { version = "latest", mr_boxington = true }
-mr-boxington = "latest"
