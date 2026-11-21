@@ -1,7 +1,7 @@
 # Godot バージョン管理
 
 Godot の公式 GitHub Releases から Linux x86_64 版を取得し、バージョン別に `/opt` へ
-インストールする。Godot 本体は Nix、APT、chezmoi では管理しない。
+インストールする。Godot 本体はこの専用スクリプトで管理し、miseのグローバルCLI設定には含めない。
 
 ## 配置
 
